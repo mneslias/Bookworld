@@ -2,8 +2,6 @@
 
 Ce projet charge des ventes brutes, enrichit les données avec les livres de [Books to Scrape](https://books.toscrape.com/), convertit les prix GBP en EUR via l'API [Frankfurter](https://api.frankfurter.dev/), puis agrège le chiffre d'affaires par pays dans SQLite. Une API Flask expose ensuite les résultats.
 
-> **État vérifié des fichiers fournis** : le pipeline et l'API utilisent SQLite, les chemins sont relatifs au répertoire courant, et l'API ne contient actuellement aucun mécanisme d'authentification par token, clé API ou clé SSH.
-
 ## Fonctionnement
 
 1. `sales_raw.csv` est lu par `pipeline.py`.
@@ -14,13 +12,13 @@ Ce projet charge des ventes brutes, enrichit les données avec les livres de [Bo
 6. Les revenus bruts, coûts d'acquisition et revenus nets sont calculés au niveau des ventes.
 7. Les résultats sont regroupés par pays puis écrits dans la table `sales_by_country` de `bookworld_final.db`.
 
-Le pipeline dépend donc de deux services externes accessibles sur le réseau. Les fonctions de scraping et de taux disposent d'une gestion d'erreur, mais aucun mode hors ligne ni taux de secours n'est défini.
+Le pipeline dépend donc de deux services externes accessibles sur le réseau. Les fonctions de scraping et de taux disposent d'une gestion d'erreur.
 
 ## Pré-requis
 
 - Python 3.9 ou plus récent recommandé.
 - Accès réseau sortant vers `books.toscrape.com` et `api.frankfurter.dev` pour exécuter le pipeline complet.
-- SQLite (fourni généralement avec Python).
+- SQLite.
 
 ## Installation
 
@@ -33,7 +31,7 @@ python -m pip install --upgrade pip
 python -m pip install pandas requests beautifulsoup4 flask
 ```
 
-Le code importe les modules Python suivants : `pandas`, `requests`, `bs4` (`beautifulsoup4`), `flask` et `sqlite3` (bibliothèque standard). Aucun fichier `requirements.txt` n'est fourni dans les artefacts analysés.
+Le code importe les modules Python suivants : `pandas`, `requests`, `bs4` (`beautifulsoup4`), `flask` et `sqlite3` (bibliothèque standard).
 
 ## Exécuter le pipeline
 
@@ -97,7 +95,6 @@ Réponse de santé attendue :
 
 `GET /sales-by-country` renvoie un tableau JSON trié par `total_revenue_gbp` décroissant, avec les champs `country_code`, `country_name`, `total_orders`, `total_quantity`, `total_revenue_gbp` et `total_revenue_eur`.
 
-> **Production** : ne pas exposer directement le serveur de développement Flask avec `debug=True`. Utiliser un serveur WSGI et désactiver le mode debug avant déploiement.
 
 ## Authentification et sécurité
 
@@ -147,25 +144,6 @@ Relations déclarées dans `schema_final.sql` (à considérer comme documentatio
 - `countries_actifs.country_code` → `sales_by_country.country_code`.
 
 En pratique, `pipeline.py` ne crée pas les tables `sales_raw`, `channels_category` ou `countries_actifs`. Il lit les tables de référence existantes (`countries`, `channels`, `category_rules`) et crée uniquement `sales_by_country` avec `pandas.DataFrame.to_sql`.
-
-## Dépannage
-
-### `FileNotFoundError`
-
-Lancer les scripts depuis le dossier contenant les fichiers du projet :
-
-```bash
-cd /chemin/vers/bookworld
-python pipeline.py
-```
-
-### Erreur de scraping ou taux absent
-
-Vérifier la connectivité réseau et la disponibilité des deux URLs externes. Le pipeline actuel ne définit pas de valeur de repli ; sans taux, certaines étapes peuvent échouer ou ne pas produire les colonnes attendues.
-
-### Table absente au lancement de l'API
-
-Exécuter d'abord `python pipeline.py`, puis relancer `python api.py`. L'API attend la table `sales_by_country` dans le fichier `bookworld_final.db` situé dans le répertoire courant.
 
 ### Résultats différents
 

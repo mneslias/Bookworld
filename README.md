@@ -123,19 +123,8 @@ Les commandes `curl` ne doivent donc pas inclure de token. Si l'API est publiée
 
 Le flux logique réellement utilisé par le code est le suivant :
 
-```text
-bookworld_reference.db
-  countries (pays actifs) ───────────────┐
-                                         │ country_code
-  category_rules ── default_channel_code ─┼── channels (canaux actifs)
-                                         │ channel_code
-                                         ▼
-sales_raw.csv ── country_code/channel_code ── enrichissement ──► sales_by_country
-                                                             (bookworld_final.db)
+<img width="764" height="425" alt="schema_bases" src="https://github.com/user-attachments/assets/56c16204-0896-4659-b422-6005b264f7b4" />
 
-books.toscrape.com ── livres + prix GBP ───────┘
-api.frankfurter.dev ─ taux GBP/EUR ────────────┘
-```
 
 Relations déclarées dans `schema_final.sql` (à considérer comme documentation, et non comme le schéma SQLite effectivement créé par le pipeline) :
 

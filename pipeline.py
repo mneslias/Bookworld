@@ -71,15 +71,21 @@ def charger_requetes_sql():
         return []
 
 
-def recuperer_taux_eur():
-    url = "https://api.frankfurter.dev/v2/rate/gbp/eur"
+def recuperer_taux_moyen_2025():
+    url = "https://api.frankfurter.dev/v2/rates?from=2025-01-01&to=2025-12-31&base=GBP&quotes=EUR"
 
     try:
         response = requests.get(url, timeout=30)
         response.raise_for_status()
-        return response.json()["rate"]
-    except (requests.exceptions.RequestException, KeyError) as e:
-        print(f"Erreur lors de la récupération du taux : {e}")
+
+        data = response.json()
+
+        taux_liste = [item["rate"] for item in data]
+
+        return sum(taux_liste) / len(taux_liste)
+
+    except (requests.exceptions.RequestException, KeyError, ZeroDivisionError) as e:
+        print(f"Erreur : {e}")
         return None
 
 
@@ -105,8 +111,7 @@ def creer_dataframe_livres(taux_gbp_eur):
     return df_livres
 
 
-def convertir_cout_acquisition(channels_category):
-    taux_gbp_eur = recuperer_taux_eur()
+def convertir_cout_acquisition(channels_category, taux_gbp_eur):
 
     if taux_gbp_eur is None:
         return channels_category
@@ -229,17 +234,13 @@ def main():
     countries_actifs = resultats[0]
     channels_category = resultats[1]
 
-    resultats = charger_requetes_sql()
-
-    taux_gbp_eur = recuperer_taux_eur()
+    taux_gbp_eur = recuperer_taux_moyen_2025()
 
     sales_raw = nettoyage()
 
     df_livres = creer_dataframe_livres(taux_gbp_eur)
 
-    channels_category = convertir_cout_acquisition(channels_category)
-
-    sales_raw = nettoyage()
+    channels_category = convertir_cout_acquisition(channels_category, taux_gbp_eur)
 
     sales_raw = ajouter_revenus(
         sales_raw,

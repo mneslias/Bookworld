@@ -15,7 +15,6 @@ Le dépôt contient également une petite API Flask qui expose la table SQLite f
 - [Exécuter le pipeline](#exécuter-le-pipeline)
 - [Démarrer l’API](#démarrer-lapi)
 - [Référence HTTP](#référence-http)
-- [Clé d’API HTTP(#clé-dapi-http)
 - [Résultats fournis](#résultats-fournis)
 - [Écarts du schéma](#écarts-du-schéma)
 - [Limites et points connus](#limites-et-points-connus)

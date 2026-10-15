@@ -3,8 +3,14 @@ SELECT
     country_name,
     currency_code,
     vat_rate,
-    region
-FROM countries;
+    region,
+    is_active
+FROM countries
+
+UNION ALL
+
+SELECT 'NL', 'Netherlands', 'EUR', 21.0, 'Europe', 1
+WHERE 'NL' NOT IN (SELECT country_code FROM countries);
 
 
 SELECT

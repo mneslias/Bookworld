@@ -7,7 +7,7 @@ Ce projet charge des ventes brutes, enrichit les données avec les livres de [Bo
 1. `sales_raw.csv` est lu par `pipeline.py`.
 2. Les colonnes `order_date` sont converties en dates et les noms/prénoms clients sont supprimés.
 3. Les livres et leurs prix en livres sterling sont récupérés depuis `books.toscrape.com`.
-4. Le taux GBP → EUR est récupéré depuis `https://api.frankfurter.dev/v2/rate/gbp/eur`.
+4. Le taux GBP → EUR moyen sur 2025 est récupéré depuis `[https://api.frankfurter.dev/v2/rate/gbp/eur](https://api.frankfurter.dev/v2/rates?from=2025-01-01&to=2025-12-31&base=GBP&quotes=EUR)`.
 5. Les pays actifs et les règles de catégories/canaux actifs sont lus dans `bookworld_reference.db` par les requêtes de `queries.sql`.
 6. Les revenus bruts, coûts d'acquisition et revenus nets sont calculés au niveau des ventes.
 7. Les résultats sont regroupés par pays puis écrits dans la table `sales_by_country` de `bookworld_final.db`.

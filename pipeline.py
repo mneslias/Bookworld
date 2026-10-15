@@ -116,27 +116,6 @@ def creer_dataframe_livres(taux_gbp_eur):
 
     return df_livres
 
-def ajouter_revenus(sales_raw, df_livres, channels_category, taux_gbp_eur):
-    assert df_livres['titre'].is_unique, "❌ df_livres contient encore des doublons !"
-
-    sales = sales_raw.merge(
-        df_livres[["titre", "prix_en_livres", "prix_en_euros"]],
-        left_on="book_name",
-        right_on="titre",
-        how="left",
-        validate="many_to_one"
-    )
-
-    if len(sales) != len(sales_raw):
-        print(f"⚠️ ATTENTION: {len(sales_raw)} lignes avant → {len(sales)} lignes après merge")
-        print("Des doublons ont été créés !")
-
-    sales["total_revenue_livres"] = (
-        sales["prix_en_livres"]
-        * sales["quantity"]
-        * (1 - sales["discount_rate"])
-    )
-
 
 def convertir_cout_acquisition(channels_category, taux_gbp_eur):
 
@@ -266,8 +245,6 @@ def main():
     sales_raw = nettoyage()
 
     df_livres = creer_dataframe_livres(taux_gbp_eur)
-
-    ajouter_revenus(sales_raw, df_livres, channels_category, taux_gbp_eur)
 
     channels_category = convertir_cout_acquisition(channels_category, taux_gbp_eur)
 

@@ -78,7 +78,7 @@ source .venv/bin/activate
 python api.py
 ```
 
-Le serveur Flask est configuré dans le code avec `debug=True` et écoute par défaut sur `http://127.0.0.1:5000`.
+Le serveur Flask est configuré dans le code avec `debug=False` et écoute par défaut sur `http://127.0.0.1:5000`.
 
 Exemples — la clé est requise pour les deux routes, y compris `/health`. Définissez-la localement dans la variable d'environnement `BOOKWORLD_API_KEY` ; ne remplacez pas cette variable par une valeur réelle dans ce fichier :
 
@@ -98,15 +98,14 @@ Réponse de santé attendue :
 
 ## Authentification et sécurité
 
-L'API utilise une clé API simple :
+L’API utilise une clé API afin de limiter l’accès à ses routes protégées.
 
-- La clé ne doit pas être écrite en clair dans le code, le README, le dépôt ou les journaux.
-- Configurez-la côté serveur avec la variable d'environnement `BOOKWORLD_API_KEY`.
-- Transmettez-la dans l'en-tête HTTP `X-API-Key`, plutôt que dans le paramètre d'URL `api_key`, afin d'éviter qu'elle apparaisse dans l'historique du navigateur, les URL ou certains journaux.
-- La fonction `@app.before_request` vérifie la clé pour toutes les routes, y compris `/health`.
-- Une clé absente ou incorrecte entraîne une réponse `401 Unauthorized`.
+### Fonctionnement
 
-Si l'implémentation actuelle accepte encore `api_key` dans l'URL ou contient une valeur codée en dur, remplacez ce comportement par la lecture de `BOOKWORLD_API_KEY` côté serveur et la lecture de `X-API-Key` côté requête. Ne commitez jamais la valeur de cette variable. Si l'API est publiée au-delà de la machine locale, utilisez HTTPS, désactivez le mode debug et faites régulièrement tourner la clé.
+1. Une clé API est définie directement dans le code de l’API.
+2. Le client envoie cette clé avec sa requête HTTP, dans l’en-tête `X-API-Key`.
+3. Le décorateur `@app.before_request` compare la clé reçue à celle définie côté serveur.
+4. Si la clé est absente ou incorrecte, l’API renvoie une réponse `401 Unauthorized`. Si elle est valide, la requête est traitée.
 
 ## Description des fichiers
 

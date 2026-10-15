@@ -27,4 +27,8 @@ LEFT JOIN channels AS ch
 WHERE cr.is_active = 1
   AND ch.is_active = 1;
 
-
+SELECT DISTINCT
+    channel_code,
+    acquisition_cost_gbp
+FROM channels
+WHERE is_active = 1;

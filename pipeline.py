@@ -238,20 +238,19 @@ def main():
     resultats = charger_requetes_sql()
 
     countries_actifs = resultats[0]
-    channels_category = resultats[1]
+    channels_category = resultats[1]      
+    channels_costs = resultats[2]          
 
     taux_gbp_eur = recuperer_taux_moyen_2025()
 
     sales_raw = nettoyage()
-
     df_livres = creer_dataframe_livres(taux_gbp_eur)
 
-    channels_category = convertir_cout_acquisition(channels_category, taux_gbp_eur)
-
+   
     sales_raw = ajouter_revenus(
         sales_raw,
         df_livres,
-        channels_category,
+        channels_costs,  
         taux_gbp_eur
     )
 

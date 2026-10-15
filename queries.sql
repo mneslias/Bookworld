@@ -4,8 +4,7 @@ SELECT
     currency_code,
     vat_rate,
     region
-FROM countries
-WHERE is_active = 1;
+FROM countries;
 
 
 SELECT

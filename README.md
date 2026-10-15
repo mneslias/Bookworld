@@ -8,7 +8,7 @@ Ce projet charge des ventes brutes, enrichit les données avec les livres de [Bo
 2. Les colonnes `order_date` sont converties en dates et les noms/prénoms clients sont supprimés.
 3. Les livres et leurs prix en livres sterling sont récupérés depuis `books.toscrape.com`.
 4. Le taux GBP → EUR moyen sur 2025 est récupéré depuis `[https://api.frankfurter.dev/v2/rate/gbp/eur](https://api.frankfurter.dev/v2/rates?from=2025-01-01&to=2025-12-31&base=GBP&quotes=EUR)`.
-5. Les pays actifs et les règles de catégories/canaux actifs sont lus dans `bookworld_reference.db` par les requêtes de `queries.sql`.
+5. Les pays et les règles de catégories/canaux actifs sont lus dans `bookworld_reference.db` par les requêtes de `queries.sql`.
 6. Les revenus bruts, coûts d'acquisition et revenus nets sont calculés au niveau des ventes.
 7. Les résultats sont regroupés par pays puis écrits dans la table `sales_by_country` de `bookworld_final.db`.
 
@@ -52,7 +52,7 @@ sqlite3 bookworld_final.db \\
   'SELECT country_code, country_name, total_orders, total_quantity, total_revenue_gbp, total_revenue_eur FROM sales_by_country ORDER BY total_revenue_gbp DESC;'
 ```
 
-La base finale fournie contient actuellement 6 lignes : BE, DE, ES, FR, IE et IT. Le CSV source contient 240 lignes, avec les pays BE, DE, ES, FR, IE, IT, NL, PT et les canaux APP, MKT et WEB. Les lignes dont le pays n'est pas actif ou dont le pays n'est pas renvoyé par la requête de pays actifs ne contribuent pas à l'agrégat final.
+La base finale fournie contient actuellement 8 lignes : BE, DE, ES, FR, IE, PT, NL et IT. Le CSV source contient 240 lignes, avec les pays BE, DE, ES, FR, IE, IT, NL, PT et les canaux APP, MKT et WEB.
 
 ### Calculs principaux
 
@@ -113,7 +113,7 @@ L’API utilise une clé API afin de limiter l’accès à ses routes protégée
 |---|---|
 | `pipeline.py` | Pipeline ETL complet : extraction du CSV, scraping des livres, conversion GBP/EUR, enrichissement, agrégation par pays et écriture de `bookworld_final.db`. |
 | `api.py` | Application Flask avec `/health` et `/sales-by-country`, lecture seule de la table finale. |
-| `queries.sql` | Deux requêtes exécutées sur `bookworld_reference.db` : pays actifs ; règles de catégories actives jointes aux canaux actifs. |
+| `queries.sql` | Deux requêtes exécutées sur `bookworld_reference.db` : pays ; règles de catégories actives jointes aux canaux actifs. |
 | `sales_raw.csv` | Source de ventes brutes : 240 lignes et 10 colonnes, dont commande, date, livre, pays, canal, quantité, remise et identité client. |
 | `bookworld_reference.db` | Référentiel SQLite avec les tables `countries`, `channels` et `category_rules`. |
 | `bookworld_final.db` | Base SQLite de sortie ; la version fournie contient la table agrégée `sales_by_country`. |

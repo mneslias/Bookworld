@@ -211,4 +211,7 @@ Le CSV contient les canaux `WEB`, `APP` et `MKT` et 8 codes pays observés. `que
 
 ## Schéma
 
+<img width="1527" height="849" alt="image" src="https://github.com/user-attachments/assets/c869931f-db08-4f9a-a7ac-c5ce32e662ba" />
+
+
 

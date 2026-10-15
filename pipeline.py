@@ -204,35 +204,52 @@ def creer_sales_by_country(sales_raw, countries_actifs):
     return sales_by_country
 
 
-def load(sales_by_country):
-    FINAL_TABLE_NAME = "sales_by_country"
+def load(
+    countries_actifs,
+    channels_costs,
+    channels_category,
+    sales_raw,
+    sales_by_country,
+):
+    tables = {
+        "countries_actifs": countries_actifs,
+        "channels_costs": channels_costs,
+        "channels_category": channels_category,
+        "sales_raw": sales_raw,
+        "sales_by_country": sales_by_country,
+    }
 
     conn = sqlite3.connect("bookworld_final.db")
 
-    sales_by_country.to_sql(
-        FINAL_TABLE_NAME,
-        conn,
-        if_exists="replace",
-        index=False,
-    )
+    try:
+        # Enregistre chaque DataFrame dans sa table SQLite.
+        for table_name, dataframe in tables.items():
+            dataframe.to_sql(
+                table_name,
+                conn,
+                if_exists="replace",
+                index=False,
+            )
+            print(f"Table SQLite créée : {table_name}")
 
-    check_df = pd.read_sql_query(
-        f"SELECT * FROM {FINAL_TABLE_NAME} LIMIT 5",
-        conn,
-    )
-    columns_df = pd.read_sql_query(
-        f"PRAGMA table_info({FINAL_TABLE_NAME})",
-        conn,
-    )
+        # Vérifie que la table attendue par l’API existe toujours.
+        check_df = pd.read_sql_query(
+            "SELECT * FROM sales_by_country LIMIT 5",
+            conn,
+        )
+        columns_df = pd.read_sql_query(
+            "PRAGMA table_info(sales_by_country)",
+            conn,
+        )
 
-    conn.close()
+        print("\nAperçu de sales_by_country :")
+        print(check_df)
 
-    print(f"Table SQLite créée : {FINAL_TABLE_NAME}")
-    print("\nAperçu des données enregistrées :")
-    print(check_df)
+        print("\nColonnes de sales_by_country :")
+        print(columns_df[["name", "type"]])
 
-    print("\nColonnes de la table :")
-    print(columns_df[["name", "type"]])
+    finally:
+        conn.close()
 
 def main():
     resultats = charger_requetes_sql()
@@ -261,7 +278,13 @@ def main():
 
     print(sales_by_country)
 
-    load(sales_by_country)
+    load(
+    countries_actifs,
+    channels_costs,
+    channels_category,
+    sales_raw,
+    sales_by_country,
+)
 
 
 if __name__ == "__main__":

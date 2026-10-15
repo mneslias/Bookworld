@@ -90,8 +90,8 @@ curl -H "X-API-Key: $BOOKWORLD_API_KEY" "http://127.0.0.1:5000/sales-by-country"
 
 Réponse de santé attendue :
 
-```json
-{"status":"ok"}
+```
+401 Unauthorized
 ```
 
 `GET /sales-by-country` renvoie un tableau JSON trié par `total_revenue_gbp` décroissant, avec les champs `country_code`, `country_name`, `total_orders`, `total_quantity`, `total_revenue_gbp` et `total_revenue_eur`.
